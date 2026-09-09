@@ -7,6 +7,10 @@ on:
       - main
     paths:
       - 'info.xlsx'
+      - 'template.html'
+      - 'scripts/**'
+      - 'docs/images/**'
+      - '.github/workflows/update_docs.yml'
   
   # 允许手动触发
   workflow_dispatch:
@@ -43,6 +47,8 @@ jobs:
       # 运行Python脚本生成文档
       - name: Run Python script
         run: |
+          python -m unittest discover -s scripts -p 'test_*.py'
+          node scripts/test_timer.mjs
           python scripts/update_docs.py
       
       # 提交更改到docs目录

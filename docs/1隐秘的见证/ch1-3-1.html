@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>3分钟罚时后提供线索</title>
+    <title>1分钟罚时后提供线索</title>
     <style>
         html, body {
             min-height: 100%;
@@ -62,27 +62,34 @@
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
             text-shadow: 0 2px 4px black;
         }
+        .clue-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+        .clue-image { display: block; max-width: 100%; height: auto; margin: 24px auto 0; border-radius: 8px; }
     </style>
 </head>
 <body>
-    <div id="countdown">00:02</div>
-    <div id="end-message">在燕墩所在位置向北望去半里左右会看到一座位于中轴线上的古代建筑。</div>
+    <div id="countdown" role="timer" aria-label="剩余罚时">01:00</div>
+    <div id="end-message">
+<div class="clue-text">《日下旧闻考》中，有一句话被用蓝线标记出来。这句话描述了燕墩和下一处地点的位置关系。 </div>
+
+    </div>
 
     <script>
-        let time = 2;
+        const deadline = Date.now() + 60 * 1000;
+        let timer;
         function update() {
+            const time = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
             let min = Math.floor(time/60).toString().padStart(2,'0');
             let sec = (time%60).toString().padStart(2,'0');
             document.getElementById("countdown").innerHTML = min+":"+sec;
             
-            if(time-- <= 0) {
+            if(time <= 0) {
                 document.getElementById("countdown").style.display = "none";
                 document.getElementById("end-message").style.display = "block";
                 clearInterval(timer);
             }
         }
         update(); // 立即显示
-        let timer = setInterval(update, 1000);
+        timer = setInterval(update, 250);
     </script>
 </body>
 </html>
