@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>1分钟罚时后提供线索</title>
+    <style>
+        html, body {
+            min-height: 100%;
+        }
+        body {
+            box-sizing: border-box;
+            min-height: 100vh;
+            margin: 0;
+            padding: 50px 20px;
+            display: grid;
+            place-items: center;
+            text-align: center;
+            font-family: Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #3f3925 url("../background.jpg") center / cover no-repeat;
+            position: relative;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: rgba(20, 16, 8, 0.58);
+        }
+        body > * {
+            position: relative;
+            z-index: 1;
+        }
+        #countdown {
+            min-width: 4.5em;
+            box-sizing: border-box;
+            font-size: clamp(48px, 10vw, 80px);
+            font-weight: 700;
+            color: white;
+            margin: 30px 0;
+            padding: 18px 28px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 16px;
+            background: rgba(17, 13, 7, 0.8);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            text-shadow: 0 2px 4px black;
+        }
+        #end-message {
+            display: none;
+            box-sizing: border-box;
+            width: min(900px, 100%);
+            color: white;
+            font-size: clamp(26px, 5vw, 40px);
+            font-weight: 600;
+            line-height: 1.55;
+            padding: clamp(22px, 5vw, 44px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 18px;
+            background: rgba(17, 13, 7, 0.84);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            text-shadow: 0 2px 4px black;
+        }
+        .clue-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+        .clue-image { display: block; max-width: 100%; height: auto; margin: 24px auto 0; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div id="countdown" role="timer" aria-label="剩余罚时">01:00</div>
+    <div id="end-message">
+
+<a href="../images/ch1-3-3.png" target="_blank" rel="noopener" aria-label="查看线索原图"><img class="clue-image" src="../images/ch1-3-3.png" alt="线索图片"></a>
+    </div>
+
+    <script>
+        const deadline = Date.now() + 60 * 1000;
+        let timer;
+        function update() {
+            const time = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+            let min = Math.floor(time/60).toString().padStart(2,'0');
+            let sec = (time%60).toString().padStart(2,'0');
+            document.getElementById("countdown").innerHTML = min+":"+sec;
+
+            if(time <= 0) {
+                document.getElementById("countdown").style.display = "none";
+                document.getElementById("end-message").style.display = "block";
+                clearInterval(timer);
+            }
+        }
+        update(); // 立即显示
+        timer = setInterval(update, 250);
+    </script>
+</body>
+</html>
