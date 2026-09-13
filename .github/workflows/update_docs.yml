@@ -16,7 +16,6 @@ on:
 
 permissions:
   contents: read
-  actions: read
   pages: write
   id-token: write
 
@@ -62,23 +61,27 @@ jobs:
           import time
           import urllib.request
 
-          url = (f"{os.environ['GITHUB_API_URL']}/repos/"
-                 f"{os.environ['GITHUB_REPOSITORY']}/actions/runs?per_page=100")
-          for attempt in range(80):
+          base = (f"{os.environ['GITHUB_API_URL']}/repos/"
+                  f"{os.environ['GITHUB_REPOSITORY']}/pages")
+          def get(url):
               request = urllib.request.Request(url, headers={
                   "Authorization": f"Bearer {os.environ['GH_TOKEN']}",
                   "Accept": "application/vnd.github+json",
               })
               with urllib.request.urlopen(request, timeout=30) as response:
-                  runs = json.load(response)["workflow_runs"]
-              pending = [run for run in runs
-                         if run["name"] == "pages build and deployment"
-                         and run["head_branch"] == "main"
-                         and run["status"] != "completed"]
-              if not pending:
+                  return json.load(response)
+
+          for attempt in range(80):
+              if get(base)["build_type"] == "workflow":
                   break
-              print("Waiting for branch Pages runs:",
-                    [run["id"] for run in pending], flush=True)
+              builds = get(base + "/builds?per_page=100")
+              current = [build for build in builds
+                         if build["commit"] == os.environ["GITHUB_SHA"]]
+              pending = [build for build in builds
+                         if build["status"] in {"queued", "building"}]
+              if current and not pending:
+                  break
+              print("Waiting for branch Pages builds to finish", flush=True)
               time.sleep(15)
           else:
               raise RuntimeError("Branch Pages deployment did not finish in 20 minutes")
