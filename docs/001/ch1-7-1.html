@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>1分钟罚时后提供线索</title>
+    <title>1秒罚时后提供线索</title>
     <style>
         html, body {
             min-height: 100%;
@@ -67,7 +67,7 @@
     </style>
 </head>
 <body>
-    <div id="countdown" role="timer" aria-label="剩余罚时">01:00</div>
+    <div id="countdown" role="timer" aria-label="剩余罚时">00:01</div>
     <div id="end-message">
 <div class="clue-text">请对照《天桥盛景图》，在现实中找到画中的天桥。石碑，就在它旁边。
 </div>
@@ -75,7 +75,7 @@
     </div>
 
     <script>
-        const deadline = Date.now() + 60 * 1000;
+        const deadline = Date.now() + 1000;
         let timer;
         function update() {
             const time = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));

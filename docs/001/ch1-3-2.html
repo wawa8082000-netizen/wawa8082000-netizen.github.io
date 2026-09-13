@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>1分钟罚时后提供线索</title>
+    <title>1秒罚时后提供线索</title>
     <style>
         html, body {
             min-height: 100%;
@@ -67,14 +67,14 @@
     </style>
 </head>
 <body>
-    <div id="countdown" role="timer" aria-label="剩余罚时">01:00</div>
+    <div id="countdown" role="timer" aria-label="剩余罚时">00:01</div>
     <div id="end-message">
 <div class="clue-text">请将那幅城门楼的彩画与现场的城门楼进行比对。找到不同之后，你会发现这处不同所对应的数字坐标。  如遇城楼修缮，现场无法完成调查，请退出当前页面，点击「求助提示3」。</div>
 
     </div>
 
     <script>
-        const deadline = Date.now() + 60 * 1000;
+        const deadline = Date.now() + 1000;
         let timer;
         function update() {
             const time = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));

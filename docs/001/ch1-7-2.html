@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>1分钟罚时后提供线索</title>
+    <title>1秒罚时后提供线索</title>
     <style>
         html, body {
             min-height: 100%;
@@ -67,7 +67,7 @@
     </style>
 </head>
 <body>
-    <div id="countdown" role="timer" aria-label="剩余罚时">01:00</div>
+    <div id="countdown" role="timer" aria-label="剩余罚时">00:01</div>
     <div id="end-message">
 <div class="clue-text">你会发现有一张《树影中的旧碑》的明信片，它的背面是碑文，但有些字被红色符号覆盖。请对照现场的石碑碑文，还原被覆盖的文字。 
 再按照碑文下方红色符号从左至右的顺序，依次找出对应的文字，组成一条23字讯息。
@@ -76,7 +76,7 @@
     </div>
 
     <script>
-        const deadline = Date.now() + 60 * 1000;
+        const deadline = Date.now() + 1000;
         let timer;
         function update() {
             const time = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));

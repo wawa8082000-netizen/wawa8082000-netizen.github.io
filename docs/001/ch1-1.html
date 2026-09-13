@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>1分钟罚时后提供线索</title>
+    <title>1秒罚时后提供线索</title>
     <style>
         html, body {
             min-height: 100%;
@@ -67,14 +67,14 @@
     </style>
 </head>
 <body>
-    <div id="countdown" role="timer" aria-label="剩余罚时">01:00</div>
+    <div id="countdown" role="timer" aria-label="剩余罚时">00:01</div>
     <div id="end-message">
 <div class="clue-text">日记中的古诗提到两处古迹的名字，有一处现已无存，请找到仍然存在的古迹名称，即为答案。</div>
 
     </div>
 
     <script>
-        const deadline = Date.now() + 60 * 1000;
+        const deadline = Date.now() + 1000;
         let timer;
         function update() {
             const time = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
