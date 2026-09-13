@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>1分钟罚时后提供线索</title>
+    <title>1秒罚时后提供线索</title>
     <style>
         html, body {
             min-height: 100%;
@@ -67,14 +67,14 @@
     </style>
 </head>
 <body>
-    <div id="countdown" role="timer" aria-label="剩余罚时">01:00</div>
+    <div id="countdown" role="timer" aria-label="剩余罚时">00:01</div>
     <div id="end-message">
 {% if prompt %}<div class="clue-text">{{ prompt }}</div>{% endif %}
 {% if image_url %}<a href="{{ image_url }}" target="_blank" rel="noopener" aria-label="查看线索原图"><img class="clue-image" src="{{ image_url }}" alt="线索图片"></a>{% endif %}
     </div>
 
     <script>
-        const deadline = Date.now() + 60 * 1000;
+        const deadline = Date.now() + 1000;
         let timer;
         function update() {
             const time = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));

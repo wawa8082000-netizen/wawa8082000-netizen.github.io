@@ -28,7 +28,7 @@ class BuildTests(unittest.TestCase):
         page = (self.root / 'docs/1碑影迷踪/image.html').read_text()
         self.assertIn('../images/%E7%BA%BF%E7%B4%A2%20%E5%9B%BE.png', page)
         self.assertIn('&lt;script&gt;x&lt;/script&gt;', page)
-        self.assertIn('01:00', page)
+        self.assertIn('00:01', page)
         self.assertTrue((self.root / 'docs/images/线索 图.png').exists())
         self.assertEqual(page, (self.root / 'docs/1隐秘的见证/image.html').read_text())
         self.assertNotIn('<img ', (self.root / 'docs/1碑影迷踪/text.html').read_text())
