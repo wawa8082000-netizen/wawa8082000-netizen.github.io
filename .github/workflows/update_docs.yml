@@ -9,67 +9,46 @@ on:
       - 'info.xlsx'
       - 'template.html'
       - 'scripts/**'
-      - 'docs/images/**'
+      - 'docs/**'
       - '.github/workflows/update_docs.yml'
-  
-  # 允许手动触发
-  workflow_dispatch:
-  
-  # 定时触发（可选，例如每天UTC时间0点）
-  # schedule:
-  #   - cron: '0 0 * * *'
 
-# 设置权限
+  workflow_dispatch:
+
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
 
 jobs:
   update-docs:
     runs-on: ubuntu-latest
-    
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      # 检出代码
       - name: Checkout repository
-        uses: actions/checkout@v4
-      
-      # 设置Python环境
+        uses: actions/checkout@v6
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
-          python-version: '3.12'  # 根据需要修改版本
-      
-      # 安装依赖
+          python-version: "3.12"
       - name: Install dependencies
+        run: python -m pip install pandas openpyxl jinja2
+      - name: Test and generate pages from Excel
         run: |
-          python -m pip install --upgrade pip
-          pip install pandas openpyxl jinja2
-      
-      # 运行Python脚本生成文档
-      - name: Run Python script
-        run: |
-          python -m unittest discover -s scripts -p 'test_*.py'
+          python -m unittest discover -s scripts -p "test_*.py"
           node scripts/test_timer.mjs
           python scripts/update_docs.py
-      
-      # 提交更改到docs目录
-      - name: Commit changes
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add docs/
-          git diff --quiet && git diff --staged --quiet || git commit -m "Auto-update docs [skip ci]"
-      
-      # 推送更改
-      - name: Push changes
-        uses: ad-m/github-push-action@master
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload generated site
+        uses: actions/upload-pages-artifact@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
-
-      # 部署到GitHub Pages
+          path: docs
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs
-          publish_branch: gh-pages  # Pages分支
+        id: deployment
+        uses: actions/deploy-pages@v4
