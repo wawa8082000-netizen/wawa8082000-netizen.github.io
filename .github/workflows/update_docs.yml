@@ -16,6 +16,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
   pages: write
   id-token: write
 
@@ -49,6 +50,39 @@ jobs:
         uses: actions/upload-pages-artifact@v4
         with:
           path: docs
+      # The repository also publishes main/docs. Finish that older-content
+      # deployment first so the freshly generated artifact is published last.
+      - name: Wait for branch-based Pages deployment
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import time
+          import urllib.request
+
+          url = (f"{os.environ['GITHUB_API_URL']}/repos/"
+                 f"{os.environ['GITHUB_REPOSITORY']}/actions/runs?per_page=100")
+          for attempt in range(80):
+              request = urllib.request.Request(url, headers={
+                  "Authorization": f"Bearer {os.environ['GH_TOKEN']}",
+                  "Accept": "application/vnd.github+json",
+              })
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  runs = json.load(response)["workflow_runs"]
+              pending = [run for run in runs
+                         if run["name"] == "pages build and deployment"
+                         and run["head_branch"] == "main"
+                         and run["status"] != "completed"]
+              if not pending:
+                  break
+              print("Waiting for branch Pages runs:",
+                    [run["id"] for run in pending], flush=True)
+              time.sleep(15)
+          else:
+              raise RuntimeError("Branch Pages deployment did not finish in 20 minutes")
+          PY
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
