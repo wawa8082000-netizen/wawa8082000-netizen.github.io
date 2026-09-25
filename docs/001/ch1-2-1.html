@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>1秒罚时后提供线索</title>
+    <title>10秒罚时后提供线索</title>
     <style>
         html, body {
             min-height: 100%;
@@ -67,14 +67,14 @@
     </style>
 </head>
 <body>
-    <div id="countdown" role="timer" aria-label="剩余罚时">00:01</div>
+    <div id="countdown" role="timer" aria-label="剩余罚时">00:10</div>
     <div id="end-message">
 <div class="clue-text">请找到找到那张绘有石刻装饰局部的硫酸纸，把他与日记背面的碑文相叠，与石刻装饰位置对应的碑文，就是密语。密语中有一个不常见的字。“衢”，读作 qú，指四通八达的道路。</div>
 
     </div>
 
     <script>
-        const deadline = Date.now() + 1000;
+        const deadline = Date.now() + 10000;
         let timer;
         function update() {
             const time = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));

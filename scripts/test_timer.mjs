@@ -17,14 +17,14 @@ vm.runInNewContext(script, {
   setInterval: fn => {tick = fn; return 1;},
   clearInterval: () => {cleared = true;},
 });
-assert.equal(elements.countdown.innerHTML, '00:01');
-now = 999;
+assert.equal(elements.countdown.innerHTML, '00:10');
+now = 9999;
 tick();
 assert.equal(elements['end-message'].style.display, 'none');
 assert.equal(elements.countdown.innerHTML, '00:01');
-now = 1000;
+now = 10000;
 tick();
 assert.equal(elements['end-message'].style.display, 'block');
 assert.equal(elements.countdown.style.display, 'none');
 assert.ok(cleared);
-console.log('1-second timer boundary passed');
+console.log('10-second timer boundary passed');

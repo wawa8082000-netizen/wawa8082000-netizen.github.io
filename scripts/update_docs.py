@@ -55,7 +55,7 @@ def build(root=ROOT):
         page.parent.mkdir(parents=True, exist_ok=True)
         page.write_text(content, encoding="utf-8")
     for stale in docs.rglob("*.html"):
-        if stale not in pages:
+        if stale not in pages and not stale.is_relative_to(docs / "demo"):
             stale.unlink()
     print(f"Generated {len(pages)} pages")
 

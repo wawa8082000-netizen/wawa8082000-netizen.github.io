@@ -28,7 +28,7 @@ class BuildTests(unittest.TestCase):
         page = (self.root / 'docs/1碑影迷踪/image.html').read_text()
         self.assertIn('../images/%E7%BA%BF%E7%B4%A2%20%E5%9B%BE.png', page)
         self.assertIn('&lt;script&gt;x&lt;/script&gt;', page)
-        self.assertIn('00:01', page)
+        self.assertIn('00:10', page)
         self.assertTrue((self.root / 'docs/images/线索 图.png').exists())
         self.assertEqual(page, (self.root / 'docs/1隐秘的见证/image.html').read_text())
         self.assertNotIn('<img ', (self.root / 'docs/1碑影迷踪/text.html').read_text())
@@ -41,6 +41,13 @@ class BuildTests(unittest.TestCase):
             with self.subTest(value=value), self.assertRaises(ValueError):
                 self.build_rows([{'网址': 'bad', '提示词': '', '图片地址': value}])
             self.assertEqual(existing.read_text(), 'keep')
+
+    def test_demo_survives_regeneration(self):
+        demo = self.root / 'docs/demo/index.html'
+        demo.parent.mkdir()
+        demo.write_text('independent demo')
+        self.build_rows([{'网址': 'text', '提示词': '正式线索'}])
+        self.assertEqual(demo.read_text(), 'independent demo')
 
     def test_old_two_column_workbooks_and_blank_rows(self):
         self.build_rows([{'网址': 'text', '提示词': '旧表格式'}, {'网址': '', '提示词': ''}])

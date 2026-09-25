@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>线索显影室 · 交互体验</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><a class="brand" href="./"><span class="seal">迹</span> 线索显影室</a><span class="tag">独立体验 DEMO</span></header>
+<main>
+<section class="intro"><div class="eyebrow">THE ART OF DISCOVERY / 01</div><h1>让等待，成为发现。</h1><p>一条线索，十二种揭开方式。选一种动作，看看秘密如何浮现。</p></section>
+<div class="workspace">
+<section class="stage-wrap" aria-label="线索预览">
+<div class="stage-heading"><span><i></i> <span id="mode-label">长按 · 模糊显影</span></span><span id="phase">等待探索</span></div>
+<div class="stage" id="stage">
+<div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+<div class="paper"><div class="paper-label">现场调查档案 <span>线索 / 003</span></div><canvas id="canvas" aria-label="尚未揭晓的线索"></canvas><p id="accessible-clue" class="sr-only"></p><div class="paper-footer">循迹而行 · 答案藏在细节里</div></div>
+</div>
+<div class="progress-track" role="progressbar" aria-label="揭示进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="progress"></div></div>
+<div class="progress-meta"><span id="instruction">按住下方按钮，线索会逐渐清晰；松开暂停。</span><span id="percent">0%</span></div>
+<button id="action" class="action" type="button">按住，拂去迷雾 <span>↗</span></button>
+<div class="under"><span id="timing">累计探索 10 秒</span><button id="replay" type="button">↺ 重新体验</button></div>
+<p id="status" class="sr-only" aria-live="polite"></p>
+</section>
+<aside>
+<section class="control-section"><div class="section-label"><span>01</span><h2>如何揭开</h2></div><div class="choices" id="interactions">
+<button data-interaction="hold" aria-pressed="true"><b>持续长按</b><small>像拂去石碑上的尘埃</small></button>
+<button data-interaction="auto" aria-pressed="false"><b>自动浮现</b><small>静静等待线索苏醒</small></button>
+<button data-interaction="tap" aria-pressed="false"><b>点击收集</b><small>每一次触碰，靠近一点</small></button>
+</div></section>
+<section class="control-section"><div class="section-label"><span>02</span><h2>秘密如何出现</h2></div><div class="effects" id="effects">
+<button data-effect="blur" aria-pressed="true"><span>◌</span>模糊显影</button><button data-effect="type" aria-pressed="false"><span>Ⅰ</span>打字机</button><button data-effect="mosaic" aria-pressed="false"><span>▦</span>马赛克</button><button data-effect="decode" aria-pressed="false"><span>⌘</span>字符解码</button>
+</div></section>
+<section class="control-section"><div class="section-label"><span>03</span><h2>试验素材</h2></div><div class="segmented"><button data-content="text" aria-pressed="true">文字线索</button><button data-content="image" aria-pressed="false">图片线索</button></div><label for="sample">修改示例文字</label><textarea id="sample" rows="4" maxlength="400">《日下旧闻考》中，有一句话被用蓝线标记出来。这句话描述了燕墩和下一处地点的位置关系。</textarea><div class="duration"><label for="duration">体验时长</label><select id="duration"><option value="5">5 秒</option><option value="10" selected>10 秒</option><option value="20">20 秒</option></select></div></section>
+<div class="note">仅用于体验效果，不会修改正式线索。<br>支持手机触摸；长按也可使用空格键。</div>
+</aside>
+</div>
+<footer>发现的乐趣，藏在揭晓之前。<span>INTERACTION LAB · 实验版</span></footer>
+</main>
+<script src="demo.js"></script>
+</body></html>
