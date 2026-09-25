@@ -20,13 +20,12 @@ const fire=(id,event='click',extra={})=>handlers.get(`${id}:${event}`)?.({preven
 const tick=(ms)=>{for(let elapsed=0;elapsed<ms;elapsed+=50){now+=50;frame(now);}};
 const pct=()=>Number(elements.get('bar')['aria-valuenow']);
 for(const content of groups.content)for(const effect of groups.effect){
-  fire(content);fire(effect);fire('tap');
-  for(let i=0;i<19;i++)fire('action');assert.ok(pct()<100);fire('action');assert.equal(pct(),100,`${content}/${effect}`);
+  fire(content);fire(effect);
+  tick(5000);assert.equal(pct(),50);
+  if(effect==='blur') assert.ok(parseFloat(elements.get('canvas').style.filter.slice(5))>=19,'strong Gaussian blur at halfway');
+  tick(4900);assert.ok(pct()<100);tick(100);assert.equal(pct(),100,`${content}/${effect}`);
+  assert.equal(elements.get('canvas').style.filter,'none');
   fire('replay');assert.equal(pct(),0);
 }
-fire('hold');fire('action','pointerdown',{button:0,pointerId:1});tick(1000);assert.equal(pct(),10);
-fire('action','pointerup');tick(1000);assert.equal(pct(),10,'release pauses');
-fire('action','keydown',{code:'Space',repeat:false});tick(1000);fire('action','keyup',{code:'Space'});assert.equal(pct(),20);
-fire('auto');tick(1000);assert.equal(pct(),10);fire('action');tick(1000);assert.equal(pct(),10,'auto pause');fire('action');tick(9000);assert.equal(pct(),100);
-fire('hold');fire('action','pointerdown',{button:0,pointerId:1});tick(500);fire('window','blur');tick(500);assert.equal(pct(),5,'window blur pauses hold');
-console.log('Demo: eight content/effect combinations, 20 taps, hold/release, keyboard, auto pause/resume, reset and blur passed');
+fire('blur');tick(1000);document.hidden=true;tick(1000);assert.equal(pct(),10);document.hidden=false;tick(9000);assert.equal(pct(),100);
+console.log('Automatic reveal: all eight content/effect combinations, Gaussian blur curve, replay and hidden-tab pause passed');

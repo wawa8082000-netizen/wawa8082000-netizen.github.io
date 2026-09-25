@@ -5,10 +5,10 @@ const source = document.createElement('canvas'), ink = source.getContext('2d');
 const low = document.createElement('canvas'), pixels = low.getContext('2d');
 const image = new Image();
 image.src = '../images/ch1-3-3.png';
-let interaction = 'hold', effect = 'blur', content = 'text';
-let progress = 0, held = false, paused = false, lastTime = performance.now(), lastPaint = 0;
-let glyphs = [], imageReady = false, pointerId = null;
-const names = {hold:'长按',auto:'自动',tap:'点击',blur:'模糊显影',type:'打字机',mosaic:'马赛克',decode:'字符解码'};
+let effect = 'blur', content = 'text';
+let progress = 0, lastTime = performance.now(), lastPaint = 0;
+let glyphs = [], imageReady = false;
+const names = {blur:'模糊显影',type:'打字机',mosaic:'马赛克',decode:'字符解码'};
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 function prepare() {
   const text = $('sample').value.trim() || '沿着细节，继续寻找。';
@@ -38,12 +38,17 @@ function prepare() {
 }
 function draw() {
   const w=canvas.width,h=canvas.height;
+  canvas.style.filter='none';
   ctx.clearRect(0,0,w,h);ctx.filter='none';ctx.globalAlpha=1;ctx.imageSmoothingEnabled=true;
   const p=reduced.matches && progress<1 ? 0 : progress;
   if(p>=1) {ctx.drawImage(source,0,0);return;}
   if(reduced.matches) {ctx.fillStyle='#868977';ctx.font='24px sans-serif';ctx.fillText('线索正在解锁…',24,60);return;}
   if(effect==='blur') {
-    ctx.filter=`blur(${(1-p)*24}px)`;ctx.globalAlpha=.12+.88*p;ctx.drawImage(source,0,0);ctx.filter='none';ctx.globalAlpha=1;
+    // CSS blur is Gaussian and works in Safari, including versions without Canvas filter.
+    // Keep full opacity and strong blur until late in the reveal.
+    const sigma=(content==='image'?28:20)*(1-Math.pow(p,5));
+    canvas.style.filter=`blur(${sigma}px)`;
+    ctx.drawImage(source,0,0);
   } else if(effect==='type') {
     if(content==='text') {
       ctx.fillStyle='#343a30';
@@ -83,56 +88,41 @@ function updateUI() {
   $('progress').style.width=`${percent}%`;$('percent').textContent=`${percent}%`;
   document.querySelector('[role=progressbar]').setAttribute('aria-valuenow',percent);
   $('phase').textContent=done?'线索已揭晓':progress>0?'正在显影':'等待探索';
-  $('action').disabled=done || (content==='image'&&!imageReady);
-  $('action').classList.toggle('holding',held);
-  $('action').textContent=done?'✓ 线索已揭晓':interaction==='hold'?'按住，拂去迷雾 ↗':interaction==='tap'?`点击，收集线索 · ${Math.round(progress*20)} / 20`:paused?'继续显影 →':'暂停显影 Ⅱ';
-  $('mode-label').textContent=`${names[interaction]} · ${names[effect]}`;
+  $('mode-label').textContent=`自动 · ${names[effect]}`;
 }
-function release() {held=false;pointerId=null;$('action').classList.remove('holding');}
+
 function reset() {
-  release();progress=0;paused=false;lastTime=performance.now();
+  progress=0;lastTime=performance.now();
   $('accessible-clue').textContent='';canvas.setAttribute('aria-label','尚未揭晓的线索');
   $('status').textContent='体验已重置';
-  $('instruction').textContent=interaction==='hold'?'按住下方按钮，线索会逐渐清晰；松开暂停。':interaction==='tap'?'点击 20 次收集完整线索，每次揭示 5%。':'无需操作，线索将自动浮现；也可以暂停。';
-  $('timing').textContent=interaction==='tap'?'20 次点击 · 不受体验时长限制':`${interaction==='hold'?'累计探索':'自动显影'} ${$('duration').value} 秒`;
-  $('duration').disabled=interaction==='tap';
+  $('instruction').textContent='无需操作，线索将自动浮现。';
+  $('timing').textContent=`自动显影 ${$('duration').value} 秒`;
   if(content==='image'&&effect==='type')$('instruction').textContent+=' 图片以扫描线方式逐步展开。';
   prepare();draw();updateUI();
 }
 function advance(amount) {
   const previous=progress;progress=Math.min(1,progress+amount);
   if(previous<1&&progress===1) {
-    release();$('status').textContent='线索已完整揭晓';
+    $('status').textContent='线索已完整揭晓';
     const description=content==='text'?($('sample').value.trim()||'沿着细节，继续寻找。'):'图片线索已揭晓：永定门石匾。';
     $('accessible-clue').textContent=description;canvas.setAttribute('aria-label',description);
   }
 }
 function frame(now) {
   const elapsed=Math.min(now-lastTime,100);lastTime=now;
-  if(!document.hidden && progress<1 && (content!=='image'||imageReady) && ((interaction==='auto'&&!paused)||(interaction==='hold'&&held))) advance(elapsed/(Number($('duration').value)*1000));
+  if(!document.hidden && progress<1 && (content!=='image'||imageReady)) advance(elapsed/(Number($('duration').value)*1000));
   if(now-lastPaint>32){draw();updateUI();lastPaint=now;}
   requestAnimationFrame(frame);
 }
-for(const group of ['interaction','effect','content']) {
+for(const group of ['effect','content']) {
   document.querySelectorAll(`[data-${group}]`).forEach(button=>button.addEventListener('click',()=>{
     document.querySelectorAll(`[data-${group}]`).forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
-    if(group==='interaction')interaction=button.dataset.interaction;
     if(group==='effect')effect=button.dataset.effect;
     if(group==='content'){content=button.dataset.content;$('sample').disabled=content==='image';}
     reset();
   }));
 }
-$('action').addEventListener('pointerdown',e=>{
-  if(interaction!=='hold'||progress>=1||e.button!==0)return;
-  e.preventDefault();held=true;pointerId=e.pointerId;lastTime=performance.now();$('action').setPointerCapture(e.pointerId);
-});
-for(const event of ['pointerup','pointercancel','lostpointercapture'])$('action').addEventListener(event,release);
-$('action').addEventListener('contextmenu',e=>e.preventDefault());
-$('action').addEventListener('keydown',e=>{if(interaction==='hold'&&(e.code==='Space'||e.code==='Enter')){e.preventDefault();if(!e.repeat){held=true;lastTime=performance.now();}}});
-$('action').addEventListener('keyup',e=>{if(e.code==='Space'||e.code==='Enter'){release();}});
-$('action').addEventListener('blur',release);
-$('action').addEventListener('click',()=>{if(progress>=1)return;if(interaction==='tap')advance(.05);if(interaction==='auto')paused=!paused;draw();updateUI();});
-window.addEventListener('blur',release);document.addEventListener('visibilitychange',()=>{release();lastTime=performance.now();});
+document.addEventListener('visibilitychange',()=>{lastTime=performance.now();});
 $('replay').addEventListener('click',reset);$('duration').addEventListener('change',reset);$('sample').addEventListener('input',reset);
 image.onload=()=>{imageReady=true;if(content==='image')reset();};
 image.onerror=()=>{$('status').textContent='图片加载失败，请刷新后重试';if(content==='image'){$('instruction').textContent='图片加载失败，请刷新后重试。';}};
