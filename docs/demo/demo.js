@@ -67,11 +67,11 @@ function draw() {
     ctx.imageSmoothingEnabled=false;ctx.drawImage(low,0,0,w,h);
   } else {
     if(content==='text') {
-      const symbols='◇△○＋∴⌘≋';
+      const solved=Math.floor(glyphs.length*p);
       glyphs.forEach((g,i)=>{
-        const revealed=((i * 0.61803398875) % 1)<p;
+        const revealed=i<solved;
         ctx.fillStyle=revealed?'#343a30':'#989680';ctx.font=`${g.size}px "Songti SC", serif`;
-        ctx.fillText(revealed?g.char:symbols[(i+Math.floor(p*70))%symbols.length],g.x,g.y);
+        ctx.fillText(revealed?g.char:String.fromCodePoint(0x4e00+Math.floor(Math.random()*(0x9fff-0x4e00+1))),g.x,g.y);
       });
     } else {
       const cols=16,rows=11,total=cols*rows;
@@ -96,12 +96,14 @@ function reset() {
   $('accessible-clue').textContent='';canvas.setAttribute('aria-label','尚未揭晓的线索');
   $('status').textContent='体验已重置';
   $('instruction').textContent='无需操作，线索将自动浮现。';
-  $('timing').textContent=`自动显影 ${$('duration').value} 秒`;
+  $('timing').textContent=effect==='decode'&&content==='text'?'从左到右 · 每字 0.2 秒':`自动显影 ${$('duration').value} 秒`;
+  $('duration').disabled=effect==='decode'&&content==='text';
   if(content==='image'&&effect==='type')$('instruction').textContent+=' 图片以扫描线方式逐步展开。';
   prepare();draw();updateUI();
 }
 function advance(amount) {
   const previous=progress;progress=Math.min(1,progress+amount);
+  if(progress>1-1e-10)progress=1;
   if(previous<1&&progress===1) {
     $('status').textContent='线索已完整揭晓';
     const description=content==='text'?($('sample').value.trim()||'沿着细节，继续寻找。'):'图片线索已揭晓：永定门石匾。';
@@ -110,7 +112,7 @@ function advance(amount) {
 }
 function frame(now) {
   const elapsed=Math.min(now-lastTime,100);lastTime=now;
-  if(!document.hidden && progress<1 && (content!=='image'||imageReady)) advance(elapsed/(Number($('duration').value)*1000));
+  if(!document.hidden && progress<1 && (content!=='image'||imageReady)) advance(elapsed/(effect==='decode'&&content==='text'?Math.max(1,glyphs.length)*200:Number($('duration').value)*1000));
   if(now-lastPaint>32){draw();updateUI();lastPaint=now;}
   requestAnimationFrame(frame);
 }

@@ -21,9 +21,10 @@ const tick=(ms)=>{for(let elapsed=0;elapsed<ms;elapsed+=50){now+=50;frame(now);}
 const pct=()=>Number(elements.get('bar')['aria-valuenow']);
 for(const content of groups.content)for(const effect of groups.effect){
   fire(content);fire(effect);
-  tick(5000);assert.equal(pct(),50);
+  const duration=content==='text'&&effect==='decode'?1200:10000;
+  tick(duration/2);assert.equal(pct(),50);
   if(effect==='blur') assert.ok(parseFloat(elements.get('canvas').style.filter.slice(5))>=19,'strong Gaussian blur at halfway');
-  tick(4900);assert.ok(pct()<100);tick(100);assert.equal(pct(),100,`${content}/${effect}`);
+  tick(duration/2-100);assert.ok(pct()<100);tick(100);assert.equal(pct(),100,`${content}/${effect}`);
   assert.equal(elements.get('canvas').style.filter,'none');
   fire('replay');assert.equal(pct(),0);
 }

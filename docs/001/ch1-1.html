@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>10秒罚时后提供线索</title>
+    <title>线索解码</title>
     <style>
         html, body {
             min-height: 100%;
@@ -33,22 +33,7 @@
             position: relative;
             z-index: 1;
         }
-        #countdown {
-            min-width: 4.5em;
-            box-sizing: border-box;
-            font-size: clamp(48px, 10vw, 80px);
-            font-weight: 700;
-            color: white;
-            margin: 30px 0;
-            padding: 18px 28px;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            border-radius: 16px;
-            background: rgba(17, 13, 7, 0.8);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-            text-shadow: 0 2px 4px black;
-        }
         #end-message {
-            display: none;
             box-sizing: border-box;
             width: min(900px, 100%);
             color: white;
@@ -67,29 +52,41 @@
     </style>
 </head>
 <body>
-    <div id="countdown" role="timer" aria-label="剩余罚时">00:10</div>
     <div id="end-message">
-<div class="clue-text">日记中提到一处有点玄的古迹的名字，即为答案。</div>
+<div class="clue-text" id="clue-text">日记中提到一处有点玄的古迹的名字，即为答案。</div>
 
     </div>
 
     <script>
-        const deadline = Date.now() + 10000;
-        let timer;
-        function update() {
-            const time = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
-            let min = Math.floor(time/60).toString().padStart(2,'0');
-            let sec = (time%60).toString().padStart(2,'0');
-            document.getElementById("countdown").innerHTML = min+":"+sec;
-
-            if(time <= 0) {
-                document.getElementById("countdown").style.display = "none";
-                document.getElementById("end-message").style.display = "block";
-                clearInterval(timer);
+        const clue = document.getElementById('clue-text');
+        if (clue) {
+            const original = clue.textContent;
+            const chars = Array.from(original);
+            const total = chars.filter(char => !/\s/u.test(char)).length;
+            const randomHan = actual => {
+                let char;
+                do { char = String.fromCodePoint(0x4e00 + Math.floor(Math.random() * (0x9fff - 0x4e00 + 1))); }
+                while (char === actual);
+                return char;
+            };
+            const start = performance.now();
+            let timer;
+            // Keep the original accessible text stable while the visual glyphs change.
+            clue.setAttribute('aria-label', original);
+            function update() {
+                const solved = Math.floor((performance.now() - start) / 200);
+                let index = 0;
+                clue.textContent = chars.map(char => /\s/u.test(char) ? char : (++index <= solved ? char : randomHan(char))).join('');
+                if (solved >= total) {
+                    clue.textContent = original;
+                    clearInterval(timer);
+                }
+            }
+            if (total) {
+                timer = setInterval(update, 50);
+                update();
             }
         }
-        update(); // 立即显示
-        timer = setInterval(update, 250);
     </script>
 </body>
 </html>
