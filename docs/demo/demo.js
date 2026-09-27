@@ -73,7 +73,7 @@ function draw() {
       const solved=Math.floor(glyphs.length*p);
       glyphs.forEach((g,i)=>{
         const revealed=i<solved;
-        ctx.fillStyle=revealed?'#343a30':'#989680';ctx.font=`${g.size}px "Songti SC", serif`;
+        ctx.fillStyle=revealed?'#343a30':'#99958b';ctx.font=`${g.size}px "Songti SC", serif`;
         const char=revealed?g.char:randomGlyph();
         ctx.fillText(char,g.x+(g.size-ctx.measureText(char).width)/2,g.y);
       });
