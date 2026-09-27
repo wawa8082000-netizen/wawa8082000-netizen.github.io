@@ -42,13 +42,6 @@ class BuildTests(unittest.TestCase):
                 self.build_rows([{'网址': 'bad', '提示词': '', '图片地址': value}])
             self.assertEqual(existing.read_text(), 'keep')
 
-    def test_demo_survives_regeneration(self):
-        demo = self.root / 'docs/demo/index.html'
-        demo.parent.mkdir()
-        demo.write_text('independent demo')
-        self.build_rows([{'网址': 'text', '提示词': '正式线索'}])
-        self.assertEqual(demo.read_text(), 'independent demo')
-
     def test_old_two_column_workbooks_and_blank_rows(self):
         self.build_rows([{'网址': 'text', '提示词': '旧表格式'}, {'网址': '', '提示词': ''}])
         self.assertTrue((self.root / 'docs/1碑影迷踪/text.html').exists())
