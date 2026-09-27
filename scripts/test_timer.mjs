@@ -26,3 +26,11 @@ console.log('Sequential random Han decoding: 200 ms per character, whitespace, f
 const mixed=run('中A1!?');mixed.step(1000);assert.equal(mixed.element.textContent,'中A1!?');assert.ok(mixed.element.children.every(cell=>cell.className==='decode-char'));
 
 const colors=run('中A');assert.equal(colors.element.children[0]['data-pending'],'true');colors.step(200);assert.equal(colors.element.children[0]['data-pending'],'false');assert.equal(colors.element.children[1]['data-pending'],'true');colors.step(400);assert.equal(colors.element.children[1]['data-pending'],'false');
+
+const spaces=run('读作 q');
+assert.notEqual(spaces.element.children[2].textContent,' ');
+spaces.step(400);assert.equal(spaces.element.children[2]['data-pending'],'true');
+spaces.step(600);assert.equal(spaces.element.children[2].textContent,' ');
+assert.equal(spaces.element.children[2]['data-pending'],'false');
+spaces.step(800);assert.equal(spaces.element.textContent,'读作 q');
+assert.ok(script.includes('cluePool'));
