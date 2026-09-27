@@ -9,6 +9,9 @@ let effect = 'blur', content = 'text';
 let progress = 0, lastTime = performance.now(), lastPaint = 0;
 let glyphs = [], imageReady = false;
 const names = {blur:'模糊显影',type:'打字机',mosaic:'马赛克',decode:'字符解码'};
+const commonHan = Array.from(new Set('天地日月山水风云雨雪星光东南西北春夏秋冬上下左右前后中大小多少长短高低远近开关出入来去人心手足眼耳口门文字书画纸笔石木金火土城桥楼路河海花草树叶红黄蓝白黑青明暗清新古今时年分秒一二三四五六七八九十百千万天地之间寻找发现线索秘密答案位置方向顺序数字图形颜色声音时间空间故事记忆现场观察对照连接组合完整还原真实变化开始结束继续等待看见知道得到可以我们你们他们这里那里一个两个每个所有没有不同相同一起因为所以如果然后最后首先东西地方世界生活学习工作朋友家园平安快乐希望梦想勇气智慧探索行动选择成功重要特别简单自然美好山川大地城市街道历史文化知识语言文字问题方法结果过程目标路径地图调查记录标记符号内容信息关系中心边界远方回声消息重现通往过去未来'));
+const symbols = Array.from('0123456789+-=*/%#@&!?<>[]()');
+function randomGlyph() { const pool=Math.random()<0.2?symbols:commonHan; return pool[Math.floor(Math.random()*pool.length)]; }
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 function prepare() {
   const text = $('sample').value.trim() || '沿着细节，继续寻找。';
@@ -20,14 +23,14 @@ function prepare() {
     let x=24,y=fontSize+12;
     for(const char of Array.from(text)) {
       if(char === '\n' || char === '\u2028') {x=24;y+=fontSize*1.7;continue;}
-      const width=ink.measureText(char).width;
+      const width=fontSize;
       if(x+width>776) {x=24;y+=fontSize*1.7;}
       glyphs.push({char,x,y,size:fontSize}); x+=width;
     }
     source.height = Math.max(390,Math.ceil(y+36));
     ink.font = `${fontSize}px "Songti SC", serif`;
     ink.fillStyle = '#343a30';
-    for(const g of glyphs) ink.fillText(g.char,g.x,g.y);
+    for(const g of glyphs) ink.fillText(g.char,g.x+(g.size-ink.measureText(g.char).width)/2,g.y);
   } else {
     source.height=534;
     if(imageReady) ink.drawImage(image,0,0,800,534);
@@ -53,7 +56,7 @@ function draw() {
     if(content==='text') {
       ctx.fillStyle='#343a30';
       const count=Math.floor(glyphs.length*p);
-      for(const g of glyphs.slice(0,count)) {ctx.font=`${g.size}px "Songti SC", serif`;ctx.fillText(g.char,g.x,g.y);}
+      for(const g of glyphs.slice(0,count)) {ctx.font=`${g.size}px "Songti SC", serif`;ctx.fillText(g.char,g.x+(g.size-ctx.measureText(g.char).width)/2,g.y);}
       const next=glyphs[count];if(next) {ctx.fillStyle='#9a743b';ctx.fillRect(next.x,next.y-next.size,2,next.size);}
     } else {
       // Image equivalent of a typewriter: reveal narrow strips from left to right.
@@ -71,7 +74,8 @@ function draw() {
       glyphs.forEach((g,i)=>{
         const revealed=i<solved;
         ctx.fillStyle=revealed?'#343a30':'#989680';ctx.font=`${g.size}px "Songti SC", serif`;
-        ctx.fillText(revealed?g.char:String.fromCodePoint(0x4e00+Math.floor(Math.random()*(0x9fff-0x4e00+1))),g.x,g.y);
+        const char=revealed?g.char:randomGlyph();
+        ctx.fillText(char,g.x+(g.size-ctx.measureText(char).width)/2,g.y);
       });
     } else {
       const cols=16,rows=11,total=cols*rows;
