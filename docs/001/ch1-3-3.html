@@ -77,17 +77,23 @@
             display: block; width: auto; max-width: 100%; height: auto;
             max-height: 85vh; margin: 0 auto; object-fit: contain;
             mix-blend-mode: multiply;
+            filter: blur(24px);
             -webkit-mask-image: linear-gradient(to right, transparent, #000 8px, #000 calc(100% - 8px), transparent), linear-gradient(to bottom, transparent, #000 8px, #000 calc(100% - 8px), transparent);
             -webkit-mask-composite: source-in;
             mask-image: linear-gradient(to right, transparent, #000 8px, #000 calc(100% - 8px), transparent), linear-gradient(to bottom, transparent, #000 8px, #000 calc(100% - 8px), transparent);
             mask-composite: intersect;
+        }
+        .clue-image.is-loaded { animation: image-reveal 1.5s ease-in-out forwards; }
+        @keyframes image-reveal {
+            from { filter: blur(24px); }
+            to { filter: blur(0); }
         }
     </style>
 </head>
 <body>
     <div id="end-message">
 
-<a class="image-frame" href="../images/ch1-3-3.png" target="_blank" rel="noopener" aria-label="查看线索原图"><img class="clue-image" src="../images/ch1-3-3.png" alt="线索图片"></a>
+<a class="image-frame" href="../images/ch1-3-3.png" target="_blank" rel="noopener" aria-label="查看线索原图"><img class="clue-image" src="../images/ch1-3-3.png" alt="线索图片" onload="this.classList.add('is-loaded')"></a>
     </div>
 
     <script>
