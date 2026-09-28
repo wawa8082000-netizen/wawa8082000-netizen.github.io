@@ -83,11 +83,6 @@
             mask-image: linear-gradient(to right, transparent, #000 8px, #000 calc(100% - 8px), transparent), linear-gradient(to bottom, transparent, #000 8px, #000 calc(100% - 8px), transparent);
             mask-composite: intersect;
         }
-        .clue-image.is-loaded { animation: image-reveal 1.5s ease-in-out forwards; }
-        @keyframes image-reveal {
-            from { filter: blur(24px); }
-            to { filter: blur(0); }
-        }
     </style>
 </head>
 <body>
@@ -95,6 +90,7 @@
 <div class="clue-text" id="clue-text">请将那幅城门楼的彩画与现场的城门楼进行比对。找到不同之后，你会发现这处不同所对应的数字坐标。</div>
 
     </div>
+
 
     <script>
         const clue = document.getElementById('clue-text');

@@ -83,11 +83,6 @@
             mask-image: linear-gradient(to right, transparent, #000 8px, #000 calc(100% - 8px), transparent), linear-gradient(to bottom, transparent, #000 8px, #000 calc(100% - 8px), transparent);
             mask-composite: intersect;
         }
-        .clue-image.is-loaded { animation: image-reveal 1.5s ease-in-out forwards; }
-        @keyframes image-reveal {
-            from { filter: blur(24px); }
-            to { filter: blur(0); }
-        }
     </style>
 </head>
 <body>
@@ -95,6 +90,7 @@
 <div class="clue-text" id="clue-text">请找到找到那张绘有石刻装饰局部的硫酸纸，把他与日记背面的碑文相叠，与石刻装饰位置对应的碑文，就是密语。密语中有一个不常见的字。“衢”，读作 qú，指四通八达的道路。</div>
 
     </div>
+
 
     <script>
         const clue = document.getElementById('clue-text');

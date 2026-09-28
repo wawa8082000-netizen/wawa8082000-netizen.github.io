@@ -83,11 +83,6 @@
             mask-image: linear-gradient(to right, transparent, #000 8px, #000 calc(100% - 8px), transparent), linear-gradient(to bottom, transparent, #000 8px, #000 calc(100% - 8px), transparent);
             mask-composite: intersect;
         }
-        .clue-image.is-loaded { animation: image-reveal 1.5s ease-in-out forwards; }
-        @keyframes image-reveal {
-            from { filter: blur(24px); }
-            to { filter: blur(0); }
-        }
     </style>
 </head>
 <body>
@@ -95,6 +90,7 @@
 <div class="clue-text" id="clue-text">在右上角、右下角，左上角，左下角中回答一个</div>
 
     </div>
+
 
     <script>
         const clue = document.getElementById('clue-text');
