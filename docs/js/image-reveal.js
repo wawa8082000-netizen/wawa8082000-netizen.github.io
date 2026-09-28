@@ -1,5 +1,5 @@
 // 默认播放时间（秒）：修改这里即可统一调整所有图片页。
-const IMAGE_REVEAL_SECONDS = 1.5;
+const IMAGE_REVEAL_SECONDS = 3;
 
 (() => {
     const images = [...document.querySelectorAll('.clue-image')];
